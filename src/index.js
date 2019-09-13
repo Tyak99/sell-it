@@ -3,7 +3,7 @@ import 'dotenv/config';
 import axios from 'axios';
 import bodyParser from 'body-parser';
 import { welcome, dialog } from './view';
-import { capitalize } from './helpers';
+import Helper from './helpers';
 
 const app = express();
 
@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
-  const name = capitalize((req.body.user_name).split('.')[0]);
+  const name = Helper.capitalize((req.body.user_name).split('.')[0]);
   res.json({
     status: 200,
     blocks: welcome(name),
@@ -34,12 +34,20 @@ app.post('/dial', (req, res) => {
   const responseUrl = JSON.parse(req.body.payload).response_url;
 
   if (callbackId === 'ryde-46e2b0') {
+    const { submission } = JSON.parse(req.body.payload);
+
+    console.log(submission);
+    // send ackowledgement
     res.send('');
+    // reply with a confirmation message
     const reply = {
       text: 'Posting your item... :rocket:',
       response_type: 'ephemeral',
     };
-    return axios.post(responseUrl, reply, config);
+    axios.post(responseUrl, reply, config);
+
+    // post the item to the sellit channel
+    return Helper.postItem(submission);
   }
 
   const data = {
@@ -53,7 +61,7 @@ app.post('/dial', (req, res) => {
     },
   };
 
-  axios.post('https://slack.com/api/dialog.open', data, config)
+  return axios.post('https://slack.com/api/dialog.open', data, config)
     .then(() => {
       res.json({ status: 200 });
     });
