@@ -3,6 +3,7 @@ import 'dotenv/config';
 import axios from 'axios';
 import bodyParser from 'body-parser';
 import { welcome, dialog } from './view';
+import { capitalize } from './helpers';
 
 const app = express();
 
@@ -21,9 +22,10 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
+  const name = capitalize((req.body.user_name).split('.')[0]);
   res.json({
     status: 200,
-    blocks: welcome,
+    blocks: welcome(name),
   });
 });
 
