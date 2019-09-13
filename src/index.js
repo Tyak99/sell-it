@@ -30,6 +30,18 @@ app.post('/', (req, res) => {
 });
 
 app.post('/dial', (req, res) => {
+  const callbackId = JSON.parse(req.body.payload).callback_id;
+  const responseUrl = JSON.parse(req.body.payload).response_url;
+
+  if (callbackId === 'ryde-46e2b0') {
+    res.send('');
+    const reply = {
+      text: 'Posting your item... :rocket:',
+      response_type: 'ephemeral',
+    };
+    return axios.post(responseUrl, reply, config);
+  }
+
   const data = {
     trigger_id: JSON.parse(req.body.payload).trigger_id,
     dialog: {
