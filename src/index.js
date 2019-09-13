@@ -1,9 +1,20 @@
 import express from 'express';
 import 'dotenv/config';
-import { welcome } from './view';
-
+import axios from 'axios';
+import bodyParser from 'body-parser';
+import { welcome, dialog } from './view';
 
 const app = express();
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+const config = {
+  headers: {
+    'Content-type': 'application/json',
+    Authorization: `Bearer ${process.env.SLACK_AUTH_TOKEN}`,
+  },
+};
 
 app.get('/', (req, res) => {
   res.send('welcome to sell-it');
@@ -14,6 +25,24 @@ app.post('/', (req, res) => {
     status: 200,
     blocks: welcome,
   });
+});
+
+app.post('/dial', (req, res) => {
+  const data = {
+    trigger_id: JSON.parse(req.body.payload).trigger_id,
+    dialog: {
+      callback_id: 'ryde-46e2b0',
+      title: 'Post item?',
+      submit_label: 'Sell',
+      state: 'postItem',
+      elements: dialog,
+    },
+  };
+
+  axios.post('https://slack.com/api/dialog.open', data, config)
+    .then(() => {
+      res.json({ status: 200 });
+    });
 });
 
 const PORT = process.env.PORT || 3000;

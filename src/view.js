@@ -36,6 +36,48 @@ const welcome = [
   },
 ];
 
+const select = {
+  label: 'Negotiable?',
+  type: 'select',
+  name: 'negotiation',
+  value: 'No',
+  optional: true,
+  options: [
+    {
+      label: 'Yes',
+      value: 'Yes',
+    },
+    {
+      label: 'No',
+      value: 'No',
+    },
+  ],
+};
+
+const dialog = [
+  {
+    type: 'text',
+    label: 'Title',
+    name: 'item_title',
+    placeholder: 'Title',
+  },
+  {
+    type: 'text',
+    label: 'Price',
+    name: 'item_price',
+    placeholder: 'Price',
+  },
+  select,
+  {
+    label: 'Additional information',
+    name: 'comment',
+    optional: true,
+    type: 'textarea',
+    hint: 'Provide additional information if needed.',
+  },
+];
+
 module.exports = {
   welcome,
+  dialog,
 };
